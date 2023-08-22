@@ -25,6 +25,7 @@ const useDeviceControl = (deviceID: string) => {
   const [deviceType, setDeviceType] = useState<string>('')
   const [deviceData, setDeviceData] = useState<any>()
   const [deviceStatus, setDeviceStatus] = useState<ConnectionMode>(connModes.OFFLINE)
+  const [alreadyInitializing, setAlreadyInitializing] = useState<boolean>(false)
 
   // Is the data still loading from the backend?
   const [isComponentLoading, setComponentLoading] = useState(true) // TODO: set back to true
@@ -34,7 +35,8 @@ const useDeviceControl = (deviceID: string) => {
 
   // Update data after receiving token and this device's ID
   useEffect(() => {
-    if (token != '' && deviceID != '') {
+    if (token != '' && deviceID != '' && !alreadyInitializing) {
+      setAlreadyInitializing(true)
       initializeDeviceData()
       // initializeDeviceInformation()
     }
@@ -86,8 +88,8 @@ const useDeviceControl = (deviceID: string) => {
     try {
       if (deviceID) {
         getRequest(`${backendURL}/api/getDataDevice?deviceID=${deviceID}`).then((data) => {
-          console.log('DEVICE DATA: ')
-          console.log(data)
+          // console.log('DEVICE DATA: ')
+          // console.log(data)
           switch (data.status) {
             case 'ONLINE':
               setDeviceStatus(connModes.ONLINE)

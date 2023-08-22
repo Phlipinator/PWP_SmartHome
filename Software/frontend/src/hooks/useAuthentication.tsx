@@ -12,11 +12,11 @@ const useAuthentication = () => {
     if (!isLoading) {
       try {
         getAccessTokenSilently().then((tokenResult) => {
-          console.log('TOKEN: ' + tokenResult)
+          // console.log('TOKEN: ' + tokenResult)
           setToken(tokenResult)
         })
         if (typeof user != 'undefined') {
-          console.log(`E-MAIL: ${user.email}`)
+          // console.log(`E-MAIL: ${user.email}`)
         }
       } catch (err) {
         console.error(err)

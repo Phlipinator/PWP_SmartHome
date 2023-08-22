@@ -23,7 +23,8 @@ interface CameraData {
 
 const CameraControl = (): ReactElement => {
   const [search, setSearch] = useSearchParams()
-  const { deviceData } = useDeviceControl(search.get('deviceID') || '')
+  const { deviceData, isComponentLoading, deviceName, deviceStatus, setConnectionMode } =
+    useDeviceControl(search.get('deviceID') || '')
 
   // const { token, user } = useAuthentication()
   //
@@ -40,7 +41,12 @@ const CameraControl = (): ReactElement => {
   }
 
   return (
-    <DeviceControl>
+    <DeviceControl
+      isComponentLoading={isComponentLoading}
+      deviceName={deviceName}
+      deviceStatus={deviceStatus}
+      setConnectionMode={setConnectionMode}
+    >
       <Accordion allowMultiple defaultIndex={[0]} mt={4}>
         <AccordionItem bgColor='customBackground.card' border='unset' borderRadius={6} mb={4}>
           <h2>

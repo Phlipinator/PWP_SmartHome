@@ -38,8 +38,8 @@ const DeviceOverview = (): ReactElement => {
       if (typeof user != 'undefined' && typeof user.email != 'undefined') {
         getRequest(`${backendURL}/api/getUserDevices?userID=${user.email}`).then((data) => {
           const deviceIDs = new Array<string>()
-          console.log('DATA: ')
-          console.log(data)
+          // console.log('DATA: ')
+          // console.log(data)
           // data.devices?.forEach((device: DeviceData) => {
           //   deviceIDs.push(device.deviceId)
           // })
