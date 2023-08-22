@@ -1,0 +1,69 @@
+{
+  "name": "pwp-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@auth0/auth0-react": "^1.12.0",
+    "@chakra-ui/icons": "^2.0.15",
+    "@chakra-ui/react": "^2.4.6",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.7",
+    "@types/react": "^18.0.26",
+    "@types/react-dom": "^18.0.9",
+    "cross-env": "^7.0.3",
+    "eslint-import-resolver-typescript": "^3.5.2",
+    "eslint-plugin-import": "^2.26.0",
+    "file-loader": "^6.2.0",
+    "framer-motion": "^8.3.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.6.1",
+    "react-scripts": "5.0.1",
+    "recharts": "^2.3.2",
+    "typescript": "^4.9.4",
+    "url-loader": "^4.1.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "local": "cross-env REACT_APP_BACKEND_URL=\"http://localhost:8080\" REACT_APP_FRONTEND_URL=\"http://localhost:3000\" react-scripts start",
+    "eject": "react-scripts eject",
+    "lint": "eslint ./**/*.{js,jsx,ts,tsx,json}",
+    "lint:fix": "eslint --fix ./**/*.{js,jsx,ts,tsx,json}",
+    "format": "prettier --write ./**/*.{js,jsx,ts,tsx,css,md,json} --config ./.prettierrc"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "@typescript-eslint/parser": "^5.47.1",
+    "eslint": "^8.31.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.31.11",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^2.8.1"
+  }
+}

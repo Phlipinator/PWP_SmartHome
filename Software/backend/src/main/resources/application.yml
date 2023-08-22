@@ -1,0 +1,11 @@
+server:
+  port: 8080
+
+auth0:
+  audience: http://localhost/api/
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-xn1qpn6ctori543q.us.auth0.com/
