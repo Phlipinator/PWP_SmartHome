@@ -1,7 +1,8 @@
 import express from 'express'
-const mqtt = require('mqtt')
 import dotenv from 'dotenv'
-import { Logger } from '../util/logger'
+import {Logger} from '../util/logger'
+
+const mqtt = require('mqtt')
 
 dotenv.config()
 
@@ -95,9 +96,9 @@ client.on('message', (topic: string, message: any) => {
         case 'pwpTemperatureSensor':
             Logger.mqtt('Received data update for temperature sensor')
             const data = JSON.parse(message.toString())
-            knownDevices.temperatureSensor.data.temperature = data.temperature
-            knownDevices.temperatureSensor.data.humidity = data.humidity
-            knownDevices.temperatureSensor.data.pressure = data.pressure
+            knownDevices.temperatureSensor.data.temperature.value = parseInt(data.temperature)
+            knownDevices.temperatureSensor.data.humidity.value = parseInt(data.humidity)
+            knownDevices.temperatureSensor.data.pressure.value = parseInt(data.pressure)
             break
     }
 })
@@ -130,11 +131,48 @@ router.get('/', (req, res) => {
 // GET details of a specific device
 router.get('/details', (req, res) => {
     Logger.express('GET /devices/details')
-    const deviceID = req.query.deviceID
+    const deviceID = req.query.deviceId
     if (deviceID === undefined) {
-        res.status(400).send('Missing deviceID')
+        res.status(400).send('Missing deviceId')
         return
     }
+
+    const device = Object.values(knownDevices).find((device) => device.id === deviceID)
+    if (device === undefined) {
+        res.status(400).send('Unknown deviceId')
+        return
+    }
+    Logger.debug("Device:")
+    console.log(device)
+
+    const response: {id: string, mode: number, data?: any} = {
+        id: device.id,
+        mode: device.data.mode,
+    }
+
+    if (device.data.mode != 3) {
+        res.send(response)
+        return;
+    }
+
+    const timestamp = Date.now()
+    response.data = {
+        timestamp: timestamp.toString(),
+        temperature: {
+            value: device.data.temperature.value,
+            unit: device.data.temperature.unit,
+        },
+        humidity: {
+            value: device.data.humidity.value,
+            unit: device.data.humidity.unit,
+        },
+        pressure: {
+            value: device.data.pressure.value,
+            unit: device.data.pressure.unit,
+        },
+    }
+
+    res.send(response)
 })
 
 export default router

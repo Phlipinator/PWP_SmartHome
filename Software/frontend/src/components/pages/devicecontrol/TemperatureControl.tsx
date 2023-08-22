@@ -102,7 +102,7 @@ const TemperatureControl = (): ReactElement => {
       const pressureData = data['pressure-history'][i]
 
       if (timeData) {
-        const timeString = new Date(timeData)
+        const timeString = new Date(parseInt(timeData))
         const hourString = ('00' + timeString.getHours()).slice(-2)
         const minuteString = ('00' + timeString.getMinutes()).slice(-2)
         if (tempData && tempData != -9999) {
