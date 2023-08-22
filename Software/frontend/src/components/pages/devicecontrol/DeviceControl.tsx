@@ -8,16 +8,28 @@ import { DeleteIcon } from '@chakra-ui/icons'
 import useDeviceControl from '../../../hooks/useDeviceControl'
 import { useSearchParams } from 'react-router-dom'
 import { Alert } from '../../ui-elements/Alert'
+import { ConnectionMode } from '../../../constants/ConnectionModes'
 
 interface DeviceControlProps {
   children: ReactNode
+  isComponentLoading: boolean
+  deviceName: string
+  deviceStatus: ConnectionMode
+  setConnectionMode: (connectionMode: ConnectionMode) => void
 }
-const DeviceControl: React.FC<DeviceControlProps> = ({ children }: DeviceControlProps) => {
+const DeviceControl: React.FC<DeviceControlProps> = ({
+  children,
+  isComponentLoading,
+  deviceName,
+  deviceStatus,
+  setConnectionMode,
+}: DeviceControlProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [search, setSearch] = useSearchParams()
-  const { removeDevice, isComponentLoading, deviceName, deviceStatus, setConnectionMode } =
-    useDeviceControl(search.get('deviceID') || '')
+  // const { isComponentLoading, deviceName, deviceStatus, setConnectionMode } = useDeviceControl(
+  //   search.get('deviceID') || '',
+  // )
 
   return (
     <Page headerName={deviceName} hasBackButton={true} backButtonDestination='/devices'>

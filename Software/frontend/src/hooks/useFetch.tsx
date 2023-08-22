@@ -22,7 +22,7 @@ const useFetch = (setComponentLoading?: Dispatch<SetStateAction<boolean>>) => {
           },
         }).then((response) => {
           if (response.status == 200) {
-            console.log('SUCCESS')
+            // console.log('SUCCESS')
             return response.json()
           } else {
             setComponentLoading ? setComponentLoading(false) : null
@@ -57,7 +57,7 @@ const useFetch = (setComponentLoading?: Dispatch<SetStateAction<boolean>>) => {
           },
         }).then((response) => {
           if (response.status == 200) {
-            console.log('SUCCESS')
+            // console.log('SUCCESS')
             return response
           } else {
             setComponentLoading ? setComponentLoading(false) : null
@@ -95,7 +95,7 @@ const useFetch = (setComponentLoading?: Dispatch<SetStateAction<boolean>>) => {
             setComponentLoading ? setComponentLoading(false) : null
             throw `Error during delete request. Error code: ${response.status}`
           } else {
-            console.log('SUCCESS')
+            // console.log('SUCCESS')
             return response
           }
         })

@@ -42,7 +42,8 @@ interface TempData {
 
 const TemperatureControl = (): ReactElement => {
   const [search] = useSearchParams()
-  const { deviceID, deviceData } = useDeviceControl(search.get('deviceID') || '')
+  const { deviceID, deviceData, isComponentLoading, deviceName, deviceStatus, setConnectionMode } =
+    useDeviceControl(search.get('deviceID') || '')
 
   const [uomTemp, setUomTemp] = useState('°C')
   const [currentTempRead, setCurrentTempRead] = useState('0')
@@ -60,8 +61,8 @@ const TemperatureControl = (): ReactElement => {
 
   useEffect(() => {
     if (deviceData) {
-      console.log(`USE EFFECT DEVICE DATA:`)
-      console.log(deviceData)
+      // console.log(`USE EFFECT DEVICE DATA:`)
+      // console.log(deviceData)
       if (deviceData['status'] == 'ONLINE') {
         updateData(deviceData)
       }
@@ -102,7 +103,7 @@ const TemperatureControl = (): ReactElement => {
       const pressureData = data['pressure-history'][i]
 
       if (timeData) {
-        const timeString = new Date(timeData)
+        const timeString = new Date(parseInt(timeData))
         const hourString = ('00' + timeString.getHours()).slice(-2)
         const minuteString = ('00' + timeString.getMinutes()).slice(-2)
         if (tempData && tempData != -9999) {
@@ -131,7 +132,12 @@ const TemperatureControl = (): ReactElement => {
   }
 
   return (
-    <DeviceControl>
+    <DeviceControl
+      isComponentLoading={isComponentLoading}
+      deviceName={deviceName}
+      deviceStatus={deviceStatus}
+      setConnectionMode={setConnectionMode}
+    >
       <Accordion allowMultiple defaultIndex={[]} mt={4}>
         <AccordionItem bgColor='customBackground.card' border='unset' borderRadius={6} mb={4}>
           <h2>

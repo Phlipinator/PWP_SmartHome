@@ -172,53 +172,21 @@ public class DataController {
                     return response;
                 }
 
-                JSONArray deviceDataArray = deviceDataObject.getJSONArray("deviceData");
+                JSONObject thermostatData = deviceDataObject.getJSONObject("data");
 
-                System.out.println("mapReqThermoData.toString():" + mapReqThermoData.toString());
-                //source : https://stackoverflow.com/questions/15609306/convert-string-to-json-array
-                //JSONObject deviceDataObject = new JSONObject(mapReqThermoData.toString());
-                //JSONArray deviceDataArray = deviceDataObject.getJSONArray("deviceData");
+                String timestamp = thermostatData.getString("timestamp");
 
-                float temperature = -9999f, humidity = -9999f, pressure = -9999f;
-                String timestamp = "N/A"; // if it is available it gets filled out in the following for loop
-                String uomTemp = "N/A", uomHum = "N/A", uomPress = "N/A";
+                JSONObject temperatureData = thermostatData.getJSONObject("temperature");
+                float temperature = temperatureData.getFloat("value");
+                String uomTemp = temperatureData.getString("unit");
 
-                for (int i = 0; i < 3; i++) {
-                    JSONObject statusData = deviceDataArray.getJSONObject(i);
-                    switch (statusData.get("name").toString()){
-                        case "MQTT Temperature":
-                            System.out.println("statusData.get(\"state\"):" + statusData.get("state"));
-                            if(statusData.get("state").equals("unknown")){
-                                temperature = -9999f;
-                            }
-                            else{
-                                temperature = Float.parseFloat(statusData.getString("state"));
-                            }
-                            timestamp = statusData.get("timestamp").toString();
-                            uomTemp = statusData.get("unit_of_measurement").toString();
-                            break;
-                        case "MQTT Humidity":
-                            if(statusData.get("state").equals("unknown")){
-                                humidity = -9999f;
-                            }
-                            else{
-                                humidity = Float.parseFloat(statusData.getString("state"));
-                            }
-                            uomHum = statusData.get("unit_of_measurement").toString();
-                            timestamp = statusData.get("timestamp").toString();  //overwriting the timestamp should not matter since all data has the same one, this just make sure that a timestamp exists as long as at least one data part is there
-                            break;
-                        case "MQTT Pressure":
-                            if(statusData.get("state").equals("unknown")){
-                                pressure = -9999f;
-                            }
-                            else{
-                                pressure = Float.parseFloat(statusData.getString("state"));
-                            }
-                            uomPress = statusData.get("unit_of_measurement").toString();
-                            timestamp = statusData.get("timestamp").toString();
-                            break;
-                    }
-                }
+                JSONObject humidityData = thermostatData.getJSONObject("humidity");
+                float humidity = humidityData.getFloat("value");
+                String uomHum = humidityData.getString("unit");
+
+                JSONObject pressureData = thermostatData.getJSONObject("pressure");
+                float pressure = pressureData.getFloat("value");
+                String uomPress = pressureData.getString("unit");
 
                 //update device with new value
                 ThermostatData thermodata = (ThermostatData) deviceData;
