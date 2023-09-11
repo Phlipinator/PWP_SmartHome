@@ -4,6 +4,7 @@ import com.pwp.backend.backend.model.Device;
 import com.pwp.backend.backend.model.DeviceType;
 import com.pwp.backend.backend.model.Network;
 import com.pwp.backend.backend.model.User;
+import com.pwp.backend.backend.model.devicedata.CameraData;
 import com.pwp.backend.backend.model.devicedata.ConnectionMode;
 import com.pwp.backend.backend.model.devicedata.DeviceData;
 import com.pwp.backend.backend.model.devicedata.ThermostatData;
@@ -96,42 +97,51 @@ public class DataController {
             case CAMERA -> {
                 //request current data
 //                String reqCameraData = makeRequest(( targetURL + "/h-a/deviceInfo?deviceId=" + deviceID), authorization);
-                String reqCameraData = makeRequest(( targetURL + "/devices/details?deviceId=" + deviceID), authorization);
+                String reqCameraData = makeRequest(( targetURL + "/devices/camera/details?deviceId=" + deviceID), authorization);
                 JSONObject deviceDataObject = new JSONObject((reqCameraData));
 
+                int deviceMode = 0;
+                if(!deviceDataObject.isNull("mode")){
+                    deviceMode = deviceDataObject.getInt("mode");
+                }
 
-                //transfrom data into string
-//                Map<String, Object> mapReqContactSensor = springParser.parseMap(reqCameraData);
-                System.out.println("CAM DATA:");
-                System.out.println(deviceDataObject);
-//                String mode = mapReqContactSensor.get("mode").toString();
-//                String timestamp = mapReqContactSensor.get("timestamp").toString();
-//                String streamURL = mapReqContactSensor.get("state").toString();
-                int mode = deviceDataObject.getInt("mode");
-//                Timestamp timestampBackend = new Timestamp(System.currentTimeMillis());
-                //abort if device is offline, i.e. no data
-                if(mode != 3){ // response if mode doesn't allow access, i.e. the device isn't online
-//                    response.put("Message", "Error: Device is offline");
+                if(deviceMode != 3){ // response if mode doesn't allow access, i.e. the device isn't online
                     response.put("status", "OFFLINE");
+//                    response.put("Message", "Error: Device is offline");
                     //update device to be offline
-                    ThermostatData thermodata = (ThermostatData) deviceData;
-                    thermodata.setStatus(ConnectionMode.OFFLINE);
-                    deviceData = thermodata;
+                    CameraData cameraData = (CameraData) deviceData;
+                    cameraData.setStatus(ConnectionMode.OFFLINE);
+                    deviceData = cameraData;
                     dataRepository.save(deviceData); //save the new value to the database to update the history
                     return response;
                 }
 
-                String timestamp = deviceDataObject.getString("timestamp");
-                String streamURL = deviceDataObject.getString("state");
+                JSONObject cameraData = deviceDataObject.getJSONObject("data");
+                String timestamp = cameraData.getString("timestamp");
+                String streamURL = cameraData.getString("streamUrl");
 
-                //formulate response
-                //response = "{"+ "\"id\":"+ deviceID +",\n\"timestamp\": " + timestamp + "\n\"contact-sensor:\" " + contactsensor +"}";
-                response.put("id", deviceID);
-//                response.put("timestamp", timestampBackend.toString());
-                response.put("status", "ONLINE");
-//                response.put("status", mode);
-                response.put("timestamp", timestamp);
-                response.put("streamURL", streamURL);
+                CameraData cameraData1 = (CameraData) deviceData;
+                ConnectionMode status;
+                switch(deviceMode){
+                    case 1:
+                        status = ConnectionMode.AP_MODE;
+                        break;
+                    case 2:
+                        status = ConnectionMode.LOCAL;
+                        break;
+                    case 3:
+                        status = ConnectionMode.ONLINE;
+                        break;
+                    default:
+                        status = ConnectionMode.ONLINE; //if we can get values it should be online
+                        break;
+                }
+                //float targetTemperature = thermodata.getTemperatureTarget();
+                cameraData1.setCurrentValues(streamURL, status);
+
+                dataRepository.save(cameraData1); //save the new value to the database to update the history
+
+                response = cameraData1.getCurrentValues();
                 return response;
             }
             //break;
@@ -143,7 +153,7 @@ public class DataController {
                 System.out.println("------------- URL: " + targetURL);
                 System.out.println("------------- DEVICE ID: " + deviceID);
 //                String reqThermoData = makeRequest((targetURL + "/h-a/deviceInfo?deviceId=" + deviceID),authorization);
-                String reqThermoData = makeRequest((targetURL + "/devices/details?deviceId=" + deviceID),authorization);
+                String reqThermoData = makeRequest((targetURL + "/devices/thermostat/details?deviceId=" + deviceID),authorization);
                 System.out.println("reqThermoData.toString():");
                 System.out.println(reqThermoData);
                 JSONObject deviceDataObject = new JSONObject((reqThermoData));
