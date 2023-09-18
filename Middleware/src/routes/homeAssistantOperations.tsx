@@ -1,3 +1,7 @@
+// DEPRECATED:
+// This file is not used anymore. It was used to connect to Home Assistant via the websocket API.
+// Home Assistant is no longer used and has been replaced by an MQTT broker.
+
 import express from 'express'
 import dotenv from 'dotenv'
 import {

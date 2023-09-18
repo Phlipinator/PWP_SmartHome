@@ -37,7 +37,7 @@ const CameraControl = (): ReactElement => {
   }, [deviceData])
 
   const updateCameraData = (data: CameraData): void => {
-    console.log('') // TODO: insert camera specific operations that handle the data received
+    console.log(data)
   }
 
   return (

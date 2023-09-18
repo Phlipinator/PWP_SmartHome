@@ -8,6 +8,11 @@ dotenv.config()
 
 const router = express.Router()
 
+enum DeviceType {
+    THERMOSTAT,
+    CAMERA,
+}
+
 // CONSTANTS
 const mqttHost = process.env.MQTT_HOST
 if (mqttHost === undefined) {
@@ -34,7 +39,7 @@ if (mqttPassword === undefined) {
 }
 
 // DEVICE INFO
-const knownDevices = {
+const knownThermostatDevices = {
     temperatureSensor: {
         id: '67890',
         deviceType: 'THERMOSTAT',
@@ -58,7 +63,20 @@ const knownDevices = {
             },
         },
     },
-    // TODO: Add camera
+}
+
+const knownCameraDevices = {
+    camera: {
+        id: '12345',
+        deviceType: 'CAMERA',
+        name: 'Camera',
+        stateOutTopic: 'pwpCameraState',
+        stateInTopic: 'CameraState',
+        data: {
+            mode: 3,
+            streamUrl: 'Sag ich nicht lol',
+        },
+    },
 }
 
 const test = {
@@ -78,6 +96,7 @@ client.on('connect', () => {
     Logger.mqtt('Connected to MQTT broker')
     subscribeToTopic('pwpTemperatureSensor')
     subscribeToTopic('pwpTemperatureSensorState')
+    subscribeToTopic('pwpCameraState')
 })
 
 client.on('error', (err: any) => {
@@ -91,15 +110,22 @@ client.on('message', (topic: string, message: any) => {
     switch (topic) {
         case 'pwpTemperatureSensorState':
             Logger.mqtt('Received state update for temperature sensor')
-            knownDevices.temperatureSensor.data.mode = parseInt(message.toString())
+            knownThermostatDevices.temperatureSensor.data.mode = parseInt(message.toString())
             break
         case 'pwpTemperatureSensor':
             Logger.mqtt('Received data update for temperature sensor')
             const data = JSON.parse(message.toString())
-            knownDevices.temperatureSensor.data.temperature.value = parseInt(data.temperature)
-            knownDevices.temperatureSensor.data.humidity.value = parseInt(data.humidity)
-            knownDevices.temperatureSensor.data.pressure.value = parseInt(data.pressure)
+            knownThermostatDevices.temperatureSensor.data.temperature.value = parseInt(
+                data.temperature,
+            )
+            knownThermostatDevices.temperatureSensor.data.humidity.value = parseInt(data.humidity)
+            knownThermostatDevices.temperatureSensor.data.pressure.value = parseInt(data.pressure)
             break
+        case 'pwpCameraState':
+            Logger.mqtt('Received state update for camera')
+            const cameraData = JSON.parse(message.toString())
+            knownCameraDevices.camera.data.mode = parseInt(cameraData.state)
+            knownCameraDevices.camera.data.streamUrl = cameraData.url
     }
 })
 
@@ -122,22 +148,25 @@ const initDeviceInfos = () => {}
 // GET list of all devices
 router.get('/', (req, res) => {
     Logger.express('GET /devices')
-    const devices = Object.values(knownDevices).map((device) => {
+    const thermostatDevices = Object.values(knownThermostatDevices).map((device) => {
         return { id: device.id, name: device.name, mode: device.data.mode }
     })
-    res.send({ devices: devices })
+    const cameraDevices = Object.values(knownCameraDevices).map((device) => {
+        return { id: device.id, name: device.name, mode: device.data.mode }
+    })
+    res.send({ devices: [...thermostatDevices, ...cameraDevices] })
 })
 
-// GET details of a specific device
-router.get('/details', (req, res) => {
-    Logger.express('GET /devices/details')
+// GET details of a specific thermostat device
+router.get('/thermostat/details', (req, res) => {
+    Logger.express('GET /devices/thermostat/details')
     const deviceID = req.query.deviceId
     if (deviceID === undefined) {
         res.status(400).send('Missing deviceId')
         return
     }
 
-    const device = Object.values(knownDevices).find((device) => device.id === deviceID)
+    const device = Object.values(knownThermostatDevices).find((device) => device.id === deviceID)
     if (device === undefined) {
         res.status(400).send('Unknown deviceId')
         return
@@ -175,6 +204,42 @@ router.get('/details', (req, res) => {
     res.send(response)
 })
 
+// GET details of a specific camera device
+router.get('/camera/details', (req, res) => {
+    Logger.express('GET /devices/camera/details')
+    const deviceID = req.query.deviceId
+    if (deviceID === undefined) {
+        res.status(400).send('Missing deviceId')
+        return
+    }
+
+    const device = Object.values(knownCameraDevices).find((device) => device.id === deviceID)
+    if (device === undefined) {
+        res.status(400).send('Unknown deviceId')
+        return
+    }
+    Logger.debug('Device:')
+    console.log(device)
+
+    const response: { id: string; mode: number; data?: any } = {
+        id: device.id,
+        mode: device.data.mode,
+    }
+
+    if (device.data.mode != 3) {
+        res.send(response)
+        return
+    }
+
+    const timestamp = Date.now()
+    response.data = {
+        timestamp: timestamp.toString(),
+        streamUrl: device.data.streamUrl,
+    }
+
+    res.send(response)
+})
+
 // POST device connection mode
 router.post('/setConnectionMode', (req, res) => {
     Logger.express('POST /devices/setConnectionMode')
@@ -192,8 +257,16 @@ router.post('/setConnectionMode', (req, res) => {
         return
     }
 
-    const device = Object.values(knownDevices).find((device) => device.id === deviceID)
-    if (device === undefined) {
+    let deviceType: DeviceType | undefined = undefined
+    const thermostatDevice = Object.values(knownThermostatDevices).find(
+        (device) => device.id === deviceID,
+    )
+    const cameraDevice = Object.values(knownCameraDevices).find((device) => device.id === deviceID)
+    if (thermostatDevice !== undefined) {
+        deviceType = DeviceType.THERMOSTAT
+    } else if (cameraDevice !== undefined) {
+        deviceType = DeviceType.CAMERA
+    } else {
         res.status(400).send('Unknown deviceId')
         return
     }
@@ -203,12 +276,14 @@ router.post('/setConnectionMode', (req, res) => {
         return
     }
 
-    Logger.debug('Device:')
-    console.log(device)
-
     // Publish new state
-    Logger.mqtt('Publishing new state to topic "TemperatureSensorState"')
-    client.publish('TemperatureSensorState', mode.toString())
+    if (deviceType === DeviceType.THERMOSTAT) {
+        Logger.mqtt(`Publishing new state to topic "TemperatureSensorState": ${mode.toString()}`)
+        client.publish('TemperatureSensorState', mode.toString())
+    } else if (deviceType === DeviceType.CAMERA) {
+        Logger.mqtt(`Publishing new state to topic "CameraState": ${mode.toString()}`)
+        client.publish('CameraState', mode.toString())
+    }
 
     res.status(200).send('OK')
 })
