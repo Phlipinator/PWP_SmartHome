@@ -44,6 +44,7 @@ const checkJwt = auth({
 // APP SETUP
 
 app.use(cors())
+app.use(express.json())
 
 // HELPER METHODS
 

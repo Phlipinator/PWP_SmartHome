@@ -230,4 +230,42 @@ router.get('/camera/details', (req, res) => {
     res.send(response)
 })
 
+// POST device connection mode
+router.post('/setConnectionMode', (req, res) => {
+    Logger.express('POST /devices/setConnectionMode')
+    const deviceID = req.query.deviceId
+    console.log(req.body)
+    const mode = parseInt(req.body.connectionMode)
+
+    if (deviceID === undefined) {
+        res.status(400).send('Missing deviceId in query')
+        return
+    }
+
+    if (mode === undefined) {
+        res.status(400).send('Missing connectionMode in body')
+        return
+    }
+
+    const device = Object.values(knownDevices).find((device) => device.id === deviceID)
+    if (device === undefined) {
+        res.status(400).send('Unknown deviceId')
+        return
+    }
+
+    if (mode < 0 || mode > 3) {
+        res.status(400).send('Invalid mode')
+        return
+    }
+
+    Logger.debug('Device:')
+    console.log(device)
+
+    // Publish new state
+    Logger.mqtt('Publishing new state to topic "TemperatureSensorState"')
+    client.publish('TemperatureSensorState', mode.toString())
+
+    res.status(200).send('OK')
+})
+
 export default router
