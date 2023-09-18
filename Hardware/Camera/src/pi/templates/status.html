@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{% block title %} Welcome to PiCam {% endblock %}</h1>
+<div>
+  <label for="mode">Mode</label>
+  <input type="range" id="mode" name="mode" min="0" max="3" value={{ mode }} list="values" style="width: 300px;">
+  <datalist id="values" style="width: 300px; display: flex; justify-content: space-between;">
+    <option value="0" label="Offline"></option>
+    <option value="1" label="Hotspot"></option>
+    <option value="2" label="Local"></option>
+    <option value="3" label="Online"></option>
+  </datalist>
+</div>
+<script src="{{url_for('static', filename='index.js')}}"></script>
+
+{% endblock %}

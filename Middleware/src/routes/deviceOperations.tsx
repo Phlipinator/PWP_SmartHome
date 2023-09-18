@@ -247,7 +247,7 @@ router.post('/setConnectionMode', (req, res) => {
         return
     }
 
-    const device = Object.values(knownDevices).find((device) => device.id === deviceID)
+    const device = Object.values(knownCameraDevices).find((device) => device.id === deviceID)
     if (device === undefined) {
         res.status(400).send('Unknown deviceId')
         return
