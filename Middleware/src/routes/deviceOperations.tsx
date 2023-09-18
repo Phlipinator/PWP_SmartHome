@@ -8,6 +8,11 @@ dotenv.config()
 
 const router = express.Router()
 
+enum DeviceType {
+    THERMOSTAT,
+    CAMERA,
+}
+
 // CONSTANTS
 const mqttHost = process.env.MQTT_HOST
 if (mqttHost === undefined) {
@@ -116,6 +121,11 @@ client.on('message', (topic: string, message: any) => {
             knownThermostatDevices.temperatureSensor.data.humidity.value = parseInt(data.humidity)
             knownThermostatDevices.temperatureSensor.data.pressure.value = parseInt(data.pressure)
             break
+        case 'pwpCameraState':
+            Logger.mqtt('Received state update for camera')
+            const cameraData = JSON.parse(message.toString())
+            knownCameraDevices.camera.data.mode = parseInt(cameraData.state)
+            knownCameraDevices.camera.data.streamUrl = cameraData.url
     }
 })
 
@@ -247,8 +257,16 @@ router.post('/setConnectionMode', (req, res) => {
         return
     }
 
-    const device = Object.values(knownCameraDevices).find((device) => device.id === deviceID)
-    if (device === undefined) {
+    let deviceType: DeviceType | undefined = undefined
+    const thermostatDevice = Object.values(knownThermostatDevices).find(
+        (device) => device.id === deviceID,
+    )
+    const cameraDevice = Object.values(knownCameraDevices).find((device) => device.id === deviceID)
+    if (thermostatDevice !== undefined) {
+        deviceType = DeviceType.THERMOSTAT
+    } else if (cameraDevice !== undefined) {
+        deviceType = DeviceType.CAMERA
+    } else {
         res.status(400).send('Unknown deviceId')
         return
     }
@@ -258,12 +276,14 @@ router.post('/setConnectionMode', (req, res) => {
         return
     }
 
-    Logger.debug('Device:')
-    console.log(device)
-
     // Publish new state
-    Logger.mqtt('Publishing new state to topic "TemperatureSensorState"')
-    client.publish('TemperatureSensorState', mode.toString())
+    if (deviceType === DeviceType.THERMOSTAT) {
+        Logger.mqtt(`Publishing new state to topic "TemperatureSensorState": ${mode.toString()}`)
+        client.publish('TemperatureSensorState', mode.toString())
+    } else if (deviceType === DeviceType.CAMERA) {
+        Logger.mqtt(`Publishing new state to topic "CameraState": ${mode.toString()}`)
+        client.publish('CameraState', mode.toString())
+    }
 
     res.status(200).send('OK')
 })
