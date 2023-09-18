@@ -18,8 +18,8 @@ const Navigation = (): ReactElement => {
   return (
     <Router>
       <Auth0Provider
-        domain='https://dev-xn1qpn6ctori543q.us.auth0.com'
-        clientId='kRQuO57fxBbFrfkcq4G2qwDcm8BqwY1h'
+        domain='https://dev-anmewyh78881h3ls.eu.auth0.com'
+        clientId='tOPsI8veuNjw5PZJMxVO2B4Jouu3MPxJ'
         redirectUri={`${frontendURL}/callback`}
         audience='http://localhost/api/'
         useRefreshTokens
