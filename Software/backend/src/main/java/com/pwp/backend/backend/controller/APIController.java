@@ -338,7 +338,7 @@ public class APIController {
                 // Tutorial from: https://www.baeldung.com/java-httpclient-post
                 HttpClient client = HttpClient.newBuilder().build();
                 HttpRequest req = HttpRequest.newBuilder()
-                        .uri(URI.create(getNetworkURL(user.getNetworkID()) +  "/h-a/setConnectionMode?deviceId=" + deviceID))
+                        .uri(URI.create(getNetworkURL(user.getNetworkID()) +  "/devices/setConnectionMode?deviceId=" + deviceID))
                         .header ("authorization", authorization)
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString("{\"connectionMode\": "+ connectionMode + "}"))
