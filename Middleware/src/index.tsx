@@ -108,16 +108,17 @@ const registerAtBackend = (middlewareUrl: string) => {
 
 // Check if the request is from the local network
 const checkLocalMode = (req: any, res: any, next: any) => {
-    const ip = req.headers.host
+    const ip = req.headers.host as string
     console.log(ip)
-    if (ip === 'localhost:3001') {
-        Logger.debug('Local mode')
-        req.isLocalRequest = true
-        next()
-    } else {
+
+    if (ip.includes('ngrok')) {
         Logger.debug('Online mode')
         req.isLocalRequest = false
         checkJwt(req, res, next)
+    } else {
+        Logger.debug('Local mode')
+        req.isLocalRequest = true
+        next()
     }
 }
 
