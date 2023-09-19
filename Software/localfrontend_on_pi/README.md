@@ -1,0 +1,1 @@
+# Everything you need to know can be found in the README.md file in the localfrontend folder.
