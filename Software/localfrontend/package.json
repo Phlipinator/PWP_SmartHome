@@ -31,7 +31,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "cross-env REACT_APP_FRONTEND_URL=\"http://192.168.178.21:3000\" REACT_APP_MIDDLEWARE_URL=\"http://192.168.178.21:3001\" react-scripts build",
     "test": "cross-env REACT_APP_FRONTEND_URL=\"http://localhost:3000\" react-scripts start",
     "eject": "react-scripts eject",
     "lint": "eslint ./**/*.{js,jsx,ts,tsx,json}",
