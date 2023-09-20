@@ -113,11 +113,11 @@ const checkLocalMode = (req: any, res: any, next: any) => {
 
     if (ip.includes('ngrok')) {
         Logger.debug('Online mode')
-        req.isLocalRequest = false
+        req.app.set('isLocalRequest', false)
         checkJwt(req, res, next)
     } else {
         Logger.debug('Local mode')
-        req.isLocalRequest = true
+        req.app.set('isLocalRequest', true)
         next()
     }
 }
