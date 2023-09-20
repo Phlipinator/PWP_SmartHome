@@ -179,7 +179,9 @@ router.get('/thermostat/details', (req, res) => {
         mode: device.data.mode,
     }
 
-    if (device.data.mode != 3) {
+    const isLocalRequest: any = req.app.get('isLocalRequest')
+
+    if (!(device.data.mode == 3 || (device.data.mode == 2 && isLocalRequest))) {
         res.send(response)
         return
     }
@@ -226,7 +228,9 @@ router.get('/camera/details', (req, res) => {
         mode: device.data.mode,
     }
 
-    if (device.data.mode != 3) {
+    const isLocalRequest: any = req.app.get('isLocalRequest')
+
+    if (!(device.data.mode == 3 || (device.data.mode == 2 && isLocalRequest))) {
         res.send(response)
         return
     }
