@@ -37,6 +37,12 @@ const CameraControl = (): ReactElement => {
     console.log(data)
   }
 
+  const updateHeight = (event: any) => {
+    const iFrame = event.target as HTMLIFrameElement
+    // 16:9 aspect ratio
+    iFrame.height = iFrame.scrollWidth * 0.5625 + 'px'
+  }
+
   return (
     <DeviceControl deviceName='Camera'>
       <Accordion allowMultiple defaultIndex={[0]} mt={4}>
@@ -53,9 +59,9 @@ const CameraControl = (): ReactElement => {
           </h2>
           <AccordionPanel pb={4}>
             <iframe
-              width='100%'
-              height='auto'
+              style={{ width: '1px', minWidth: '100%' }}
               src={deviceData ? deviceData['stream-url'] : ''}
+              onLoad={(e) => updateHeight(e)}
               title='Camera Live Stream'
               allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
               allowFullScreen

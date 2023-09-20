@@ -1,4 +1,5 @@
 import React, { ReactElement, useEffect } from 'react'
+import IframeResizer from 'iframe-resizer-react'
 import {
   Accordion,
   AccordionButton,
@@ -15,6 +16,7 @@ import useDeviceControl from '../../../hooks/useDeviceControl'
 import { DeviceControl } from './DeviceControl'
 import useFetch from '../../../hooks/useFetch'
 import { useSearchParams } from 'react-router-dom'
+import DynamicIFrame from '../../ui-elements/DynamicIFrame'
 
 interface CameraData {
   'device-id': string
@@ -26,10 +28,6 @@ const CameraControl = (): ReactElement => {
   const { deviceData, isComponentLoading, deviceName, deviceStatus, setConnectionMode } =
     useDeviceControl(search.get('deviceID') || '')
 
-  // const { token, user } = useAuthentication()
-  //
-  // const { postRequest } = useFetch()
-
   useEffect(() => {
     if (deviceData) {
       updateCameraData(deviceData)
@@ -38,6 +36,12 @@ const CameraControl = (): ReactElement => {
 
   const updateCameraData = (data: CameraData): void => {
     console.log(data)
+  }
+
+  const updateHeight = (event: any) => {
+    const iFrame = event.target as HTMLIFrameElement
+    // 16:9 aspect ratio
+    iFrame.height = iFrame.scrollWidth * 0.5625 + 'px'
   }
 
   return (
@@ -61,18 +65,26 @@ const CameraControl = (): ReactElement => {
           </h2>
           <AccordionPanel pb={4}>
             <iframe
-              width='100%'
-              height='auto'
+              style={{ width: '1px', minWidth: '100%' }}
               src={deviceData ? deviceData['stream-url'] : ''}
+              onLoad={(e) => updateHeight(e)}
               title='Camera Live Stream'
               allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
               allowFullScreen
-            ></iframe>
+            />
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
     </DeviceControl>
   )
 }
-
+// <DynamicIFrame src={deviceData ? deviceData['stream-url'] : ''} />
+// ;<iframe
+//   width='100%'
+//   height='auto'
+//   src={deviceData ? deviceData['stream-url'] : ''}
+//   title='Camera Live Stream'
+//   allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+//   allowFullScreen
+// ></iframe>
 export { CameraControl }
