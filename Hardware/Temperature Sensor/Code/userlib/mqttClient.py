@@ -28,7 +28,7 @@ def restart_and_reconnect(delaySeconds=10):
 # Must be called before any other functions!
 def initClient(subscription_callback):
     global CLIENT_ID, client
-    client = MQTTClient(CLIENT_ID, env.MQTT_SERVER, env.MQTT_PORT, env.MQTT_USER, env.MQTT_PW)
+    client = MQTTClient(CLIENT_ID, env.MQTT_SERVER, env.MQTT_PORT, env.MQTT_USER, env.MQTT_PW, 30)
     client.set_callback(subscription_callback)
 
 # Connects to the MQTT broker specified within the mqtt_server variable as specified in env.py.

@@ -4,10 +4,10 @@
 # Data of the MQTT Broker you want to utilize.
 # In our case it is a Home Assistant instance with the mosquitto addon (remember to open port 1883 in the corresponding router)
 # Utilized in: userlib.mqttClient.py
-MQTT_SERVER = 'philipphomeassistant.duckdns.org'
+MQTT_SERVER = 'philippsbroker.duckdns.org'
 MQTT_PORT = 1883
-MQTT_USER = 'mqtt-user'
-MQTT_PW = 'PhilippSmartHomeMQTT'
+MQTT_USER = 'mqtt_user'
+MQTT_PW = 'mqtt-docker'
 
 # The names of the MQTT topics we utilize.
 # Utilized in: userlib.mqttClient.py and main.py
