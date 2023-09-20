@@ -60,7 +60,7 @@ const CameraControl = (): ReactElement => {
           <AccordionPanel pb={4}>
             <iframe
               style={{ width: '1px', minWidth: '100%' }}
-              src={deviceData ? deviceData['stream-url'] : ''}
+              src={deviceData ? deviceData.data.streamUrl : ''}
               onLoad={(e) => updateHeight(e)}
               title='Camera Live Stream'
               allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
