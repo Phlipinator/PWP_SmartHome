@@ -36,7 +36,7 @@ const useFetch = () => {
       method: 'POST',
       body: body,
       headers: {
-        contentType: 'application/json',
+        'Content-Type': 'application/json',
       },
     }).then((response) => {
       if (response.status == 200) {
