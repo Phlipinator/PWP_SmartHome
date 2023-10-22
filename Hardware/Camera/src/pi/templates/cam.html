@@ -2,9 +2,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>{% block title %} Live Cam {% endblock %}</h1>
+<h3>{% block title %} Live Cam {% endblock %}</h3>
 
-<iframe id="2" width="853" height="480" scrolling="no"></iframe>
+<!--<iframe id="2" width="853" height="480" scrolling="no"></iframe>-->
+<iframe id="2" width="100%" scrolling="no"></iframe>
 <script src="{{url_for('static', filename='cam.js')}}"></script>
 
 {% endblock %}

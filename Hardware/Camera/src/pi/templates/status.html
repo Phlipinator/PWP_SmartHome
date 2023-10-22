@@ -1,16 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>{% block title %} Welcome to PiCam {% endblock %}</h1>
-<div>
-  <label for="mode">Mode</label>
-  <input type="range" id="mode" name="mode" min="0" max="3" value={{ mode }} list="values" style="width: 300px;">
-  <datalist id="values" style="width: 300px; display: flex; justify-content: space-between;">
-    <option value="0" label="Offline"></option>
-    <option value="1" label="Hotspot"></option>
-    <option value="2" label="Local"></option>
-    <option value="3" label="Online"></option>
-  </datalist>
+<h3>{% block title %} Status {% endblock %}</h3>
+<div class="center-flex">
+  <div class="list-group status-list">
+    <div id="btn-offline" class="list-group-item list-group-item-action status-button">
+      Offline
+    </div>
+    <div id="btn-ap" style="color: #ffcc66" class="list-group-item list-group-item-action status-button">
+      Access Point
+    </div>
+    <div id="btn-local" class="list-group-item list-group-item-action status-button">
+      Local Network
+    </div>
+    <div id="btn-online" class="list-group-item list-group-item-action status-button">
+      Online
+    </div>
+  </div>
 </div>
 <script src="{{url_for('static', filename='index.js')}}"></script>
 

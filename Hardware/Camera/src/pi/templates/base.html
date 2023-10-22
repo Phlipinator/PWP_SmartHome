@@ -1,42 +1,114 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-    <title>{% block title %} {% endblock %}</title>
+  <title>{% block title %} {% endblock %}</title>
+
+  <style>
+    body {
+      background: #242424;
+      color: white;
+      font-family: "Open Sans", sans-serif;
+    }
+
+    button {
+      color: white !important;
+    }
+
+    h3 {
+      text-align: center;
+    }
+
+    .container {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-items: center;
+      align-items: center;
+    }
+
+    .navbar {
+      background: #343639;
+      color: white;
+    }
+
+    .center-flex {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .navbar-brand {
+      color: white !important;
+    }
+
+    .navbar-toggler {
+      border: 1px solid #8b8b8b;
+    }
+
+    .list-group {
+      width: 100%;
+    }
+
+    .list-group-item {
+      background: #343639;
+      cursor: pointer;
+      color: white;
+    }
+
+    .list-group-item:hover {
+      background: #4e5156;
+      color: white;
+    }
+
+    .modal-content {
+      background: #4e5156;
+    }
+
+    #btnConn {
+      background: #0088cc;
+    }
+
+    .status-list {
+      max-width: 500px;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-md navbar-light bg-light">
-    <a class="navbar-brand" href="{{ url_for('status')}}">PiCam</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+<nav class="navbar navbar-dark navbar-expand-md navbar-light">
+  <a class="navbar-brand" href="{{ url_for('status')}}">PiCam</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item active">
-          <a class="nav-link" href="wifi">Network</a>
-        </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="cam">Camera</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
- <div class="container">
- {% block content %} {% endblock %}
- </div>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="wifi">Network</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="cam">Camera</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+  <img src="{{url_for('static', filename='pwp_logo.png')}}" style="width: 100%; max-width: 300px">
+  {% block content %} {% endblock %}
+</div>
 
 </body>
 </html>
