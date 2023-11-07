@@ -12,6 +12,8 @@ import userlib.networkUtil as net
 import userlib.espnowClient as espnow
 # Our environment variables
 import env
+# Multithreading Capabilities
+import _thread
 
 # DEFINITIONS ----------
 
@@ -27,27 +29,19 @@ def handleMSG(msg):
     except:
         print('Couldn\'t handle data viz instructions: ' + msg)
 
-loopTimer = Timer(1)
-def startLoop():
-    # Initialize timer that calls ongoing functionality infinitely
-    loopTimer.init(period=500, mode=Timer.PERIODIC, callback=loopCallback)
+def startListen():
+    _thread.start_new_thread(getMessages, ())
 
-def loopCallback(timer):
-    try:
+def getMessages():
+    while True:
         host, msg = espnow.getMessage()
-        if msg:
-            print('Inc. msg from [%s]: %s' % (host, msg))
+        if msg:             # msg == None if timeout in recv()
+            print('Msg from [%s]: %s' % (host, msg))
             handleMSG(msg)
-
-    except OSError as e:
-        print(f'Error checking for ESPnow messages: {e}')
-        # leds.changeColor((255,0,0)) # TODO Comment in again
-
-def stopLoop():
-    loopTimer.deinit()
+            if msg == b'end':
+                break
 
 def stopAll():
-    stopLoop()
     leds.stopLoop()
     leds.clearAll()
 
@@ -71,4 +65,4 @@ leds.startLoop()
 leds.activeAnimations = []
 
 # Start espnow Thread (for reading ESPnow Messages)
-espnow.startListen()
+startListen()

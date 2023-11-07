@@ -1,5 +1,4 @@
 import espnow # type: ignore # (Tells Pylance to ignore this problem.)
-import _thread
 
 e = None
 
@@ -14,16 +13,8 @@ def initESPNow():
 def addPeer(peer):
     e.add_peer(peer) # Must add_peer() before send()
 
-def startListen():
-    _thread.start_new_thread(getMessages, ())
-
-def getMessages():
-    while True:
-        host, msg = e.recv()
-        if msg:             # msg == None if timeout in recv()
-            print(host, msg)
-            if msg == b'end':
-                break
+def getMessage():
+    return e.recv()
 
 def sendMessage(peer, msg):
     e.send(peer, msg, True)
