@@ -1,4 +1,3 @@
-# Implementation with EPSNOW instead of MQTT
 # Python time functionality
 import time
 import os
@@ -9,23 +8,25 @@ import userlib.ledFunctions as leds
 # For handling network functionality
 import userlib.networkUtil as net
 # For handling everything MQTT.
-import userlib.espnowClient as espnow
+import userlib.mqttClient as mqtt
 # Our environment variables
 import env
 
 # DEFINITIONS ----------
 
 # Callback function for incoming MQTT messages. Provides handling for these messages.
-def handleMSG(msg):
-    # Handle incoming state here #TODO: Integrate Topic Check?
-    try:
-        msg = msg.decode('utf-8')
-        print('Received new data viz instructions: ' + msg)
-        streamID = int(msg[0:2])
-        onOff = int(msg[2])
-        leds.changeViz(streamID, onOff)
-    except:
-        print('Couldn\'t handle data viz instructions: ' + msg)
+def subscription_cb(topic, msg):
+    msg = msg.decode('utf-8')
+    print('Inc. message: [%s] %s' % (topic, msg))
+    # Handle incoming state here
+    if topic == env.DATAVIZ_TOPIC:
+        try:
+            print('Received new data viz instructions: ' + msg)
+            streamID = int(msg[0:2])
+            onOff = int(msg[2])
+            leds.changeViz(streamID, onOff)
+        except:
+            print('Couldn\'t handle data viz instructions: ' + msg)
 
 loopTimer = Timer(1)
 def startLoop():
@@ -34,13 +35,9 @@ def startLoop():
 
 def loopCallback(timer):
     try:
-        host, msg = espnow.getMessage()
-        if msg:
-            print('Inc. msg from [%s]: %s' % (host, msg))
-            handleMSG(msg)
-
+        mqtt.read()
     except OSError as e:
-        print(f'Error checking for ESPnow messages: {e}')
+        print(f'Error checking for MQTT messages: {e}')
         # leds.changeColor((255,0,0)) # TODO Comment in again
 
 def stopLoop():
@@ -61,14 +58,14 @@ leds.clearAll()
 print('Establishing WLAN network connection...')
 net.enableWLAN()
 
-print('Initializing EPSNow client...')
-espnow.initESPNow()
+print('Initializing MQTT client...')
+mqtt.initClient(subscription_cb)
 
 # Start LED animation loop
 leds.startLoop()
 
-# Function for debugging, that sets specific LED strips to active.
-leds.activeAnimations = []
+# Start main loop (for reading MQTT)
+startLoop()
 
-# Start espnow Thread (for reading ESPnow Messages)
-espnow.startListen()
+# Function for debugging, that sets all existing LED strips to active. TODO: Deactivate
+leds.activeAnimations = []
