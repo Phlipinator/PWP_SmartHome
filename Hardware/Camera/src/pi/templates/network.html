@@ -1,48 +1,48 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>{% block title %} Network settings {% endblock %}</h1>
+<h3>{% block title %} Available networks{% endblock %}</h3>
 
 <div id="connAlert" class="alert alert-info d-none" role="alert"> </div>
 
 <div class="list-group">
-    {% for signal in signals %}
-    <a value="{{ signal }}" class="list-group-item list-group-item-action">
-        {{ signal }}
-    </a>
-    {% endfor %}
+  {% for signal in signals %}
+  <a value="{{ signal }}" class="list-group-item list-group-item-action">
+    {{ signal }}
+  </a>
+  {% endfor %}
 </div>
 
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Connect to Wifi</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Connect to Wifi</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="exampleModalBody">
+        <div id="ssidAlert" class="alert alert-primary" role="alert">
+          Connecting to WLAN...
         </div>
-        <div class="modal-body" id="exampleModalBody">
-          <div id="ssidAlert" class="alert alert-primary" role="alert">
-            Connecting to WLAN...
-          </div>
-            <div class="form-group">
-              <label for="inputSsid">SSID</label>
-              <input type="text" class="form-control" id="inputSsid" aria-describedby="ssidHelp" placeholder="Enter SSID">
-            </div>
-            <div class="form-group">
-              <label for="exampleInputPassword1">Password</label>
-              <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-            </div>
+        <div class="form-group">
+          <label for="inputSsid">SSID</label>
+          <input type="text" class="form-control" id="inputSsid" aria-describedby="ssidHelp" placeholder="Enter SSID">
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button id="btnConn" type="button" class="btn btn-primary">Connect</button>
+        <div class="form-group">
+          <label for="exampleInputPassword1">Password</label>
+          <input type="password" class="form-control" id="inputPassword" placeholder="Password">
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button id="btnConn" type="button" class="btn btn-primary">Connect</button>
       </div>
     </div>
   </div>
+</div>
 <script src="{{url_for('static', filename='wifi.js')}}"></script>
 
 {% endblock %}
