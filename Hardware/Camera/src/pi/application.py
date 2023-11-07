@@ -118,6 +118,8 @@ class Application:
             self.network.disconnect_wifi()
             self.network.start_hotspot()
             self.network.check_hotspot(False)
+            #neu von Michi
+            self.network.state = State.AP
 
         else: # checked if state is valid --> must be LAN or WAN
             print("Going WiFi...")

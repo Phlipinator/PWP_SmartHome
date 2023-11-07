@@ -33,7 +33,7 @@ class NetworkManager:
             if line.startswith(prefix):
                 return line[len(prefix):]
 
-    def check_wifi(self, once=False, attempts=3, go_ap=True):
+    def check_wifi(self, once=False, attempts=5, go_ap=True):
         matches = ['wpa_state=COMPLETED', 'ip_address']
         for i in range(1 if once else attempts):
             print("Checking wifi connection...")
@@ -49,7 +49,7 @@ class NetworkManager:
                 print(e)
             except:
                 print("Unknown error!")
-            if not once: time.sleep(2)
+            if not once: time.sleep(5)
 
         if self.state != State.LAN and go_ap:
             print("Failed to connect to wifi")
@@ -142,7 +142,13 @@ class NetworkManager:
             return []
     
     def set_wifi(self, ssid, psk):
+        print("===========================")
+        print("Rein in die Olga")
+        print("ssid: " + ssid)
+        print("psk: " + psk)
         conf = open(self.config_file, 'w')
+        print("Opened config:")
+        print(conf)
         lines = [
             'ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\n\n',
             'network={\n',
