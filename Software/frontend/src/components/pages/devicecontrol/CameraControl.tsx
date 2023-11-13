@@ -64,13 +64,11 @@ const CameraControl = (): ReactElement => {
             </AccordionButton>
           </h2>
           <AccordionPanel pb={4}>
-            <iframe
+            <video
               style={{ width: '1px', minWidth: '100%' }}
               src={deviceData ? deviceData['stream-url'] : ''}
-              onLoad={(e) => updateHeight(e)}
+              // onLoad={(e) => updateHeight(e)}
               title='Camera Live Stream'
-              allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
-              allowFullScreen
             />
           </AccordionPanel>
         </AccordionItem>
@@ -78,6 +76,14 @@ const CameraControl = (): ReactElement => {
     </DeviceControl>
   )
 }
+// <iframe
+//   style={{ width: '1px', minWidth: '100%' }}
+//   src={deviceData ? deviceData['stream-url'] : ''}
+//   onLoad={(e) => updateHeight(e)}
+//   title='Camera Live Stream'
+//   allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+//   allowFullScreen
+// />
 // <DynamicIFrame src={deviceData ? deviceData['stream-url'] : ''} />
 // ;<iframe
 //   width='100%'

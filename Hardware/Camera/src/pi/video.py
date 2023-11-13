@@ -1,3 +1,4 @@
+import requests
 from picamera2 import Picamera2
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import FfmpegOutput
@@ -22,6 +23,10 @@ class VideoStream:
         video_dir,
         file_prefix
     ):
+        print("STARTING NGROK")
+        self.ngrok_url = self.start_ngrok_tunnel(5000)
+        print("NGROK URL: ", self.ngrok_url)
+        print("====================================")
         """ Starts simple-rtsp-server, rtsp stream to it & motion detectio thread"""
         print("Starting video...")
         subprocess.Popen(["/home/pi/rtsp-simple-server", "/home/pi/rtsp-simple-server.yml"])
@@ -82,3 +87,37 @@ class VideoStream:
                         print("recording ended")
                         encoding = False
             prev = cur
+
+    # Function to get ngrok tunnel URL
+    def get_ngrok_url(self):
+        try:
+            response = requests.get("http://localhost:4040/api/tunnels")
+            data = response.json()
+            return data['tunnels'][0]['public_url']
+        except Exception as e:
+            print(f"Error getting ngrok URL: {e}")
+            return None
+
+    # Function to start ngrok tunnel for a local server
+    def start_ngrok_tunnel(self, local_port):
+        try:
+            # Start ngrok in the background
+            ngrok_cmd = f"ngrok http {local_port} --log=stdout"
+            ngrok_process = subprocess.Popen(ngrok_cmd, shell=True, stdout=subprocess.PIPE)
+
+            # Wait for ngrok to start
+            time.sleep(5)
+
+            # Get the ngrok tunnel URL
+            ngrok_url = self.get_ngrok_url()
+
+            if ngrok_url:
+                print(f"ngrok tunnel URL: {ngrok_url}")
+                return ngrok_url
+            else:
+                print("Error getting ngrok tunnel URL.")
+                return None
+
+        except Exception as e:
+            print(f"Error starting ngrok tunnel: {e}")
+            return None

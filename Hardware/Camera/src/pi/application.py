@@ -9,6 +9,7 @@ from network_manager import NetworkManager
 from state import State
 from slider import Slider
 from video import VideoStream
+from streaming_output import VideoServer
 
 
 class Application:
@@ -46,6 +47,8 @@ class Application:
             self.queue
         )
 
+        # self.video = VideoServer()
+        # self.video.start()
         self.video = VideoStream(
             self.config.getboolean('video', 'motion_detection'),
             (
@@ -73,6 +76,7 @@ class Application:
 
     def get_stream_url(self):
         ip = self.network.get_ip(self.network.interface)
+        ip = self.video.ngrok_url
         return f"http://{ip}:8888/mystream"
     
 
