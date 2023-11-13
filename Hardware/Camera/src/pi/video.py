@@ -6,6 +6,8 @@ from picamera2.outputs import FfmpegOutput
 import numpy as np
 import time
 import subprocess
+import os
+import signal
 from threading import Thread
 
 
@@ -23,12 +25,9 @@ class VideoStream:
         video_dir,
         file_prefix
     ):
-        print("STARTING NGROK")
-        self.ngrok_url = self.start_ngrok_tunnel(5000)
-        print("NGROK URL: ", self.ngrok_url)
-        print("====================================")
         """ Starts simple-rtsp-server, rtsp stream to it & motion detectio thread"""
-        print("Starting video...")
+        self.ngrok_process = None
+        print("Starting video...", flush=True)
         subprocess.Popen(["/home/pi/rtsp-simple-server", "/home/pi/rtsp-simple-server.yml"])
         self.detect = detect
         self.lres = lres
@@ -93,27 +92,38 @@ class VideoStream:
         try:
             response = requests.get("http://localhost:4040/api/tunnels")
             data = response.json()
+            print("DATA", flush=True)
+            print(data, flush=True)
             return data['tunnels'][0]['public_url']
         except Exception as e:
             print(f"Error getting ngrok URL: {e}")
             return None
 
+    def kill_ngrok_process(self):
+        if self.ngrok_process:
+            os.killpg(os.getpgid(self.ngrok_process.pid), signal.SIGTERM)
+        return
+
     # Function to start ngrok tunnel for a local server
     def start_ngrok_tunnel(self, local_port):
+        print("STARTING NGROK", flush=True)
         try:
             # Start ngrok in the background
-            ngrok_cmd = f"ngrok http {local_port} --log=stdout"
-            ngrok_process = subprocess.Popen(ngrok_cmd, shell=True, stdout=subprocess.PIPE)
+            ngrok_cmd = f"/snap/bin/ngrok config add-authtoken 2Xr3WnFEufQkOd2URnsdmZtdoRL_nEn3Gkma5FwzdL1T8kQT ; /snap/bin/ngrok http {local_port} --log=stdout"
+            self.ngrok_process = subprocess.Popen(ngrok_cmd, shell=True, stdout=subprocess.PIPE)
 
             # Wait for ngrok to start
-            time.sleep(5)
-
+            self.ngrok_url = self.get_ngrok_url()
+            while self.ngrok_url == None:
+                time.sleep(5)
+                self.ngrok_url = self.get_ngrok_url()
+            
             # Get the ngrok tunnel URL
-            ngrok_url = self.get_ngrok_url()
+            #self.ngrok_url = self.get_ngrok_url()
 
-            if ngrok_url:
-                print(f"ngrok tunnel URL: {ngrok_url}")
-                return ngrok_url
+            if self.ngrok_url:
+                print(f"ngrok tunnel URL: {self.ngrok_url}")
+                return self.ngrok_url
             else:
                 print("Error getting ngrok tunnel URL.")
                 return None

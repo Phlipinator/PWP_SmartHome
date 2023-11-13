@@ -36,17 +36,7 @@ class Application:
             self.config.get('network', 'config'),
             self.config.get('network', 'ap_net')
         )
-
-        self.mqtt = Mqtt(
-            self.config.get('mqtt', 'server'),
-            self.config.getint('mqtt', 'port'),
-            self.config.get('mqtt', 'subscribe'),
-            self.config.get('mqtt', 'publish'),
-            self.config.get('mqtt', 'user'),
-            self.config.get('mqtt', 'password'),
-            self.queue
-        )
-
+        
         # self.video = VideoServer()
         # self.video.start()
         self.video = VideoStream(
@@ -65,7 +55,23 @@ class Application:
             self.config.get('video', 'file_prefix')
         )
 
-        self.queue.put(self.config.getint('network', 'state'))
+        self.mqtt = Mqtt(
+            self.config.get('mqtt', 'server'),
+            self.config.getint('mqtt', 'port'),
+            self.config.get('mqtt', 'subscribe'),
+            self.config.get('mqtt', 'publish'),
+            self.config.get('mqtt', 'user'),
+            self.config.get('mqtt', 'password'),
+            self.queue
+        )
+        
+        self.queue.put({
+            "state": 2,
+            "is_local_change": False
+        })
+        #print("CHANGING NETWORK STATE")
+        #self.queue.put(self.config.getint('network', 'state'))
+        
         self.thread = threading.Thread(target=self.run, daemon=True)
         self.thread.start()
 
@@ -75,9 +81,10 @@ class Application:
 
 
     def get_stream_url(self):
-        ip = self.network.get_ip(self.network.interface)
-        ip = self.video.ngrok_url
-        return f"http://{ip}:8888/mystream"
+        if self.network.state == State.WAN:
+            return f"{self.video.ngrok_url}/mystream"
+        else:
+            return f"http://{self.network.get_ip(self.network.interface)}:8889/mystream"
     
 
     def run(self):
@@ -86,10 +93,12 @@ class Application:
         while True:
             self.set_state(self.queue.get())
             self.queue.task_done()
-
-
-    def set_state(self, state):
+            
+    
+    def set_state(self, state_item):
         """switching logic between states"""
+        state = state_item["state"]
+        is_local_change = state_item["is_local_change"]
 
         if state == self.network.state:
             if self.slider.get_pins != self.network.state:
@@ -100,16 +109,17 @@ class Application:
         if state not in iter(State):
             print("Doing noting: invalid mode: " + str(state))
             return
-        
-        # set output bits
-        self.slider.set_pins(state)
-        print("MODE: " + str(state))
+            
+        if not False:
+            self.slider.set_pins(state)
+            print("MODE: " + str(state))
         
         if state == State.OFF:
             print("Going offline...")
             if self.network.state == State.AP:
                 self.network.stop_hotspot()
             else:
+                self.video.kill_ngrok_process()
                 self.mqtt.single(state, self.get_stream_url())
                 self.network.disconnect_wifi()
             self.network.state = State.OFF
@@ -119,6 +129,7 @@ class Application:
             #if not self.network.check_hotspot(retry=False):
             if self.network.state > State.OFF:
                 self.mqtt.single(state, self.get_stream_url())
+            self.video.kill_ngrok_process()
             self.network.disconnect_wifi()
             self.network.start_hotspot()
             self.network.check_hotspot(False)
@@ -131,14 +142,20 @@ class Application:
                 # if valid config file
                 if not path.isfile(self.network.config_file):
                     print("No valid config found! Falling back to AP mode")
-                    self.queue.put(State.AP)
+                    self.queue.put({
+                        "state": State.AP,
+                        "is_local_change": False
+                    })
                     #self.slider.set_pins(State.AP)
                     return
                 self.network.stop_hotspot()
                 self.network.connect_wifi()
                 if not self.network.check_wifi(go_ap=False):
                     print("Couldn't connect to wifi! It's not in range or wrong SSID or password")
-                    self.queue.put(State.AP)
+                    self.queue.put({
+                        "state": State.AP,
+                        "is_local_change": False
+                    })
                     return
                     #if self.network.check_hotspot():
                     #    self.network.state = State.AP
@@ -146,6 +163,10 @@ class Application:
 
                     #self.queue.queue.clear()
                     #self.queue.put(State.AP)
+            if state == State.LAN:
+                self.video.kill_ngrok_process()
+            else:
+                self.video.start_ngrok_tunnel(8889)
             
             # TODO: crashes here if failes to connect to wifi
             self.mqtt.connect()

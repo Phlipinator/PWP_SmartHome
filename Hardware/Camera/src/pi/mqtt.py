@@ -37,7 +37,10 @@ class Mqtt:
     def on_message(self, client, userdata, msg):
         """called, if entity state in homeassistant is changed by FE"""
         print(msg.payload)
-        self.queue.put(int(msg.payload))
+        self.queue.put({
+            "state": int(msg.payload),
+            "is_local_change": False
+        })
 
 
     def connect(self):
