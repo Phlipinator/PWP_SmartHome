@@ -37,3 +37,79 @@ def visualize(ledCode):
         sendMsg(espnow.rightLedController,ledCode)
     else:
         print("Error: No ESP handles this ledCode.")
+
+
+# Helper functions so no parsing state > stream has to be done outside of this module
+# Parser for the TemperatureSensor:
+currentTempState = -1
+def visualizeTempState(newState):
+    newState = int(newState)
+    global currentTempState
+    
+    if (newState == 0):
+        pass
+    elif (newState == 1):
+        visualize(421)
+    elif (newState == 2):
+        visualize(461)
+        visualize(631)
+        visualize(321)
+    elif (newState == 3):
+        visualize(461)
+        visualize(631)
+        visualize(321)
+        visualize(311)
+    else:
+        print('Error: Received invalid state ${newState}. Aborting visualization thereof.')
+        return
+    
+    if (currentTempState == 1):
+        visualize(420)
+    elif (currentTempState == 2):
+        visualize(460)
+        visualize(630)
+        visualize(320)
+    elif (currentTempState == 3):
+        visualize(460)
+        visualize(630)
+        visualize(320)
+        visualize(310)
+
+    currentTempState = newState
+
+# Parser for the Cam:
+currentCamState = -1
+def visualizeCamState(newState):
+    newState = int(newState)
+    global currentCamState
+    
+    if (newState == 0):
+        pass
+    elif (newState == 1):
+        visualize(521)
+    elif (newState == 2):
+        visualize(561)
+        visualize(631)
+        visualize(321)
+    elif (newState == 3):
+        visualize(561)
+        visualize(631)
+        visualize(321)
+        visualize(311)
+    else:
+        print('Error: Received invalid state ${newState}. Aborting visualization thereof.')
+        return
+    
+    if (currentTempState == 1):
+        visualize(520)
+    elif (currentTempState == 2):
+        visualize(560)
+        visualize(630)
+        visualize(320)
+    elif (currentTempState == 3):
+        visualize(560)
+        visualize(630)
+        visualize(320)
+        visualize(310)
+
+    currentTempState = newState
