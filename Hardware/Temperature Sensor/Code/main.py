@@ -16,6 +16,8 @@ import userlib.BME280 as BME280
 import userlib.mqttClient as mqtt
 # Our environment variables
 import env
+# For handling everything ledVisualization of datastreams.
+import userlib.ledViz as ledViz
 # Interface to access point code (for state 1 and network credentials)
 from ap.access_point import AccessPoint
 
@@ -115,6 +117,7 @@ def stateOffline():
     if(not env.DEBUG_MODE):
         ms.moveToPCT(0)
     print("Activated State 0: Offline")
+    ledViz.visualizeTempState(0) # Datastream Visualization for MUM Showcase with ESPNow
     stateUpdated()
 
 # Activate State 1 (Access Point)
@@ -123,6 +126,7 @@ def stateAccessPoint():
         ms.moveToPCT(0.333)
     ap.start()
     print("Activated State 1: Access Point")
+    ledViz.visualizeTempState(1) # Datastream Visualization for MUM Showcase with ESPNow
     stateUpdated()
 
 # Activate State 2 (Local Network)
@@ -135,6 +139,7 @@ def stateLocalNetwork():
         startMQTT()
     mqtt.publishState(2)
     print("Activated State 2: Local Network")
+    ledViz.visualizeTempState(2) # Datastream Visualization for MUM Showcase with ESPNow
     stateUpdated()
 
 # Activate State 3 (Online)
@@ -147,6 +152,7 @@ def stateOnline():
         startMQTT()
     mqtt.publishState(3)
     print("Activated State 3: Online")
+    ledViz.visualizeTempState(3) # Datastream Visualization for MUM Showcase with ESPNow
     stateUpdated()
 
 # Deactivate a specified state (shutdown any additional functionality associated with this state)
@@ -208,7 +214,7 @@ def enableWLAN():
     # Network credentials are handled via the access point interface.
     ssid, password = ap.getCredentials()
 
-    station.active(True)
+    # station.active(True) # Must stay active for ESPNow (interaction thus comment out here).
     station.connect(ssid, password)
 
     # TODO Abort after x failed attempts / x time
@@ -224,7 +230,7 @@ def enableWLAN():
 # Disconnect from the current WLAN connection and disable WLAN connectivity.
 def disableWLAN():
     station.disconnect()
-    station.active(False)
+    # station.active(False) # Must stay active for ESPNow (interaction thus comment out here).
     print('WLAN connection terminated')
 
 # Initialize our MQTT connection
@@ -299,6 +305,11 @@ ap = AccessPoint()
 
 # Initialize the WLAN access station and MQTT client for later use in state 2 and 3.
 station = network.WLAN(network.STA_IF)
+station.active(True) # Must stay active for ESPNow (therefore it is already activated here).
+
+# Initialization of datastream visualization via ESPNow
+ledViz.initialize()
+
 mqtt.initClient(subscription_cb)
 
 # Update state once upon initialization to match the current slider position.

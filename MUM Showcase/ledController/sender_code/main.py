@@ -2,7 +2,7 @@
 import os
 # ESP network functionality
 import network # type: ignore
-# For handling everything MQTT.
+# For handling everything ledVisualization of datastreams.
 import userlib.ledViz as ledViz
 
 # EXECUTIONS ------------- 
