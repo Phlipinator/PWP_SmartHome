@@ -13,11 +13,6 @@ esp.osdebug(None)
 import gc
 gc.collect()
 
-# Initialize LED strips
-import env
-import userlib.ledFunctions as leds
-leds.setupNeopixels(env.DATASTREAM_IDS)
-
 # A faster way to reset the ESP via serial.
 def reset():
     machine.reset()
