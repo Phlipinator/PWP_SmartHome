@@ -128,6 +128,20 @@ app.use('/', endpointInfo)
 // app.use('/h-a', checkLocalMode, homeAssistantOperations)
 app.use('/devices', checkLocalMode, deviceOperations)
 
+// Forward stream from http://192.168.10.191:8888/mystream/
+app.use('/stream', (req: Request, res: Response) => {
+    Logger.express('GET /stream')
+    const url = 'http://192.168.10.191:8889/mystream/'
+    Logger.express('Forwarding stream from ' + url)
+    fetch(url)
+        .then((stream) => {
+            stream.body.pipe(res)
+        })
+        .catch((err) => {
+            Logger.error(err)
+        })
+})
+
 // START SERVER
 app.listen(port, () => {
     Logger.express(`Server is running at http://localhost:${port}`)
