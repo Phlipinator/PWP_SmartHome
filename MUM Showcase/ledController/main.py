@@ -2,21 +2,16 @@
 # Python time functionality
 import time
 import os
-# For interacting with the ESP board.
-from machine import Timer # type: ignore # (Tells Pylance to ignore this problem.)
 # For interacting with all the LEDs connected to the ESP.
 import userlib.ledFunctions as leds
 # For handling network functionality
-import userlib.networkUtil as net
+import network # type: ignore
 # For handling everything MQTT.
 import userlib.espnowClient as espnow
-# Our environment variables
-import env
 # Multithreading Capabilities
 import _thread
 
 # DEFINITIONS ----------
-
 # Callback function for incoming MQTT messages. Provides handling for these messages.
 def handleMSG(msg):
     # Handle incoming state here #TODO: Integrate Topic Check?
@@ -46,14 +41,15 @@ def stopAll():
     leds.clearAll()
 
 # EXECUTIONS ------------- 
-
 # Indicate successful boot
 leds.allOn(0,0,255)
 time.sleep_ms(1000)
 leds.clearAll()
 
-print('Establishing WLAN network connection...')
-net.enableWLAN()
+# EXECUTIONS ------------- 
+print('Enabling WLAN...')
+sta = network.WLAN(network.STA_IF)  # Or network.AP_IF
+sta.active(True)
 
 print('Initializing EPSNow client...')
 espnow.initESPNow()

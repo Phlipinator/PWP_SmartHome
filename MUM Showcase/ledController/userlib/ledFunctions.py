@@ -108,17 +108,36 @@ def changeColor(color):
 
 changeColor(originalColor)
 
-# Changes a streamID in the active animations to on or off (if possible and not already on).
+
+# A dictionary that keeps track of how many times each streamID has been turned on.
+streamIDCount = {}
+
 def changeViz(streamID, onOff):
-    if (streamID in availableIDs):
-        if (onOff == 1):
+    # Check if the streamID is available
+    if streamID in availableIDs:
+        # If turning on
+        if onOff == 1:
+            # Increase the count for the streamID
+            streamIDCount[streamID] = streamIDCount.get(streamID, 0) + 1
+            # Add to activeAnimations if not already there
             if streamID not in activeAnimations:
                 activeAnimations.append(streamID)
+        # If turning off
         else:
-            try:
-                activeAnimations.remove(streamID)
-            except ValueError:
-                pass
+            # Decrease the count for the streamID, if it exists
+            if streamID in streamIDCount:
+                streamIDCount[streamID] -= 1
+                # If the count reaches zero, remove from activeAnimations
+                if streamIDCount[streamID] <= 0:
+                    try:
+                        activeAnimations.remove(streamID)
+                        # Also, remove the streamID from the count dictionary
+                        del streamIDCount[streamID]
+                    except ValueError:
+                        pass
+    # Debugging
+    print('Current streamIDCount: '+str(streamIDCount))
+
 
 # Functions to handle timed animations below ------------
 # Timer utilized for LED animations
