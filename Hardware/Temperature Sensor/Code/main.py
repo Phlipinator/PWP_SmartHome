@@ -264,7 +264,7 @@ def loopCallback(timer):
     if(currentState == 1):
         # Try publishing current sensor readings.
         try:
-            ap.setSensorData(temp, hum)
+            ap.setSensorData(temp, hum, pres)
         except Exception as e:
             print(f'Could not publish sensor readings to Access Point due to error: {e}')
     

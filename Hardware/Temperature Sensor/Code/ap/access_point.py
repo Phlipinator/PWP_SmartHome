@@ -23,9 +23,10 @@ class AccessPoint():
         self.portal.htmlBuilder.pw = pw
         self.portal.htmlBuilder.writeToIndex()
 
-    def setSensorData(self,value1,value2):
+    def setSensorData(self,value1,value2,value3):
         self.portal.htmlBuilder.value1 = value1
         self.portal.htmlBuilder.value2 = value2
+        self.portal.htmlBuilder.value3 = value3
         self.portal.htmlBuilder.writeToIndex()
 
 
