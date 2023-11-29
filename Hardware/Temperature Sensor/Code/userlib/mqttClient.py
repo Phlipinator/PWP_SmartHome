@@ -56,7 +56,7 @@ def publishData(temp, hum, pres):
 
 # Publishes a message to all topics listed in topics2pub.
 def publishState(state):
-    client.publish(env.STATE_TOPIC_OUT, str.encode(str(state)))
+    client.publish(env.STATE_TOPIC_OUT, str.encode(str(state)), retain=True)
     
 # Subscribes to a topic on the connected MQTT broker. 
 def subscribeTopic(topic):
