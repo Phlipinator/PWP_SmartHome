@@ -17,11 +17,17 @@ const LandingPage = (): ReactElement => {
   return (
     <Page headerName='Welcome!' hasBackButton={false}>
       <VStack mt='15vh'>
-        <Image src={process.env.PUBLIC_URL + '/assets/images/pwp_logo.png'} height='100%' mb={4} />
+        <Image
+          src={process.env.PUBLIC_URL + '/assets/images/pwp_logo.png'}
+          height='100%'
+          maxWidth={600}
+          mb={4}
+        />
         {!isAuthenticated ? <LoginButton /> : []}
 
         {isAuthenticated ? (
           <Button
+            className='Default-Button'
             colorScheme='telegram'
             border='none'
             w='100%'
@@ -36,6 +42,7 @@ const LandingPage = (): ReactElement => {
         )}
 
         <Button
+          className='Default-Button'
           colorScheme='telegram'
           border='none'
           w='100%'
