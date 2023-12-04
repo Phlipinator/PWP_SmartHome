@@ -45,5 +45,8 @@ def get_mode():
 @app.route("/api/network", methods=["POST"])
 def set_mode():
     newMode = request.args.get('mode')
-    application.queue.put(int(newMode))
+    application.queue.put({
+        "state": int(newMode),
+        "is_local_change": False
+    })
     return "Mode: " + str(application.network.state)

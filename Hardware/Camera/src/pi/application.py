@@ -131,6 +131,7 @@ class Application:
                 self.mqtt.single(state, self.get_stream_url())
             self.video.kill_ngrok_process()
             self.network.disconnect_wifi()
+            time.sleep(.5)
             self.network.start_hotspot()
             self.network.check_hotspot(False)
             #neu von Michi
