@@ -10,6 +10,14 @@ def initESPNow():
     e = espnow.ESPNow()
     e.active(True)
 
+def reinitESPNow():
+    global e
+    e.active(True)
+
+def deinitESPNow():
+    global e
+    e.active(False)
+
 def addPeer(peer):
     e.add_peer(peer) # Must add_peer() before send()
 
