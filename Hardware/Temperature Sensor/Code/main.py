@@ -17,7 +17,7 @@ import userlib.mqttClient as mqtt
 # Our environment variables
 import env
 # For handling everything ledVisualization of datastreams.
-# import userlib.ledViz as ledViz
+import userlib.lofiLedViz as ledViz
 # Interface to access point code (for state 1 and network credentials)
 from ap.access_point import AccessPoint
 
@@ -118,7 +118,7 @@ def stateOffline():
     if(not env.DEBUG_MODE):
         ms.moveToPCT(0)
     print("Activated State 0: Offline")
-    # ledViz.visualizeTempState(0) # Datastream Visualization for MUM Showcase with ESPNow
+    ledViz.visualizeTempState(0) # Datastream Visualization for MUM Showcase with ESPNow
     stateUpdated()
 
 # Activate State 1 (Access Point)
@@ -127,7 +127,7 @@ def stateAccessPoint():
         ms.moveToPCT(0.333)
     ap.start()
     print("Activated State 1: Access Point")
-    # ledViz.visualizeTempState(1) # Datastream Visualization for MUM Showcase with ESPNow
+    ledViz.visualizeTempState(1) # Datastream Visualization for MUM Showcase with ESPNow
     stateUpdated()
 
 # Activate State 2 (Local Network)
@@ -140,7 +140,7 @@ def stateLocalNetwork():
         startMQTT()
     mqtt.publishState(2)
     print("Activated State 2: Local Network")
-    # ledViz.visualizeTempState(2) # Datastream Visualization for MUM Showcase with ESPNow
+    ledViz.visualizeTempState(2) # Datastream Visualization for MUM Showcase with ESPNow
     stateUpdated()
 
 # Activate State 3 (Online)
@@ -153,7 +153,7 @@ def stateOnline():
         startMQTT()
     mqtt.publishState(3)
     print("Activated State 3: Online")
-    # ledViz.visualizeTempState(3) # Datastream Visualization for MUM Showcase with ESPNow
+    ledViz.visualizeTempState(3) # Datastream Visualization for MUM Showcase with ESPNow
     stateUpdated()
 
 # Deactivate a specified state (shutdown any additional functionality associated with this state)
