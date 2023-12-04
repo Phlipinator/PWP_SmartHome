@@ -73,4 +73,8 @@ def pendingState(active=True):
         ledTimer.init(period=200, mode=Timer.PERIODIC, callback=ledTimerCB)
     else:
         ledTimer.deinit()
-        leds[ledState].on()
+        #leds[ledState].on()
+        ledTimer.init(mode=Timer.ONE_SHOT, period=1000, callback=delayedTurnOn)
+
+def delayedTurnOn(timer):
+    leds[ledState].on()

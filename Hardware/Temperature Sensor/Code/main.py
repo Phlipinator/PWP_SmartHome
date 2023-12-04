@@ -17,7 +17,7 @@ import userlib.mqttClient as mqtt
 # Our environment variables
 import env
 # For handling everything ledVisualization of datastreams.
-import userlib.ledViz as ledViz
+import userlib.lofiLedViz as ledViz
 # Interface to access point code (for state 1 and network credentials)
 from ap.access_point import AccessPoint
 
@@ -110,6 +110,7 @@ def stateUpdated():
     global targetState, currentState, externalUpdate
     currentState = targetState
     externalUpdate = False
+    leds.leds[leds.ledState].on() # Sometimes this update gets swallowed within pendingState(False), so we do it again to make sure the led is on.
     
 
 # Activate State 0 (offline)
@@ -214,7 +215,7 @@ def enableWLAN():
     # Network credentials are handled via the access point interface.
     ssid, password = ap.getCredentials()
 
-    # station.active(True) # Must stay active for ESPNow (interaction thus comment out here).
+    station.active(True)
     station.connect(ssid, password)
 
     # TODO Abort after x failed attempts / x time
@@ -230,7 +231,7 @@ def enableWLAN():
 # Disconnect from the current WLAN connection and disable WLAN connectivity.
 def disableWLAN():
     station.disconnect()
-    # station.active(False) # Must stay active for ESPNow (interaction thus comment out here).
+    station.active(False)
     print('WLAN connection terminated')
 
 # Initialize our MQTT connection
@@ -308,7 +309,7 @@ station = network.WLAN(network.STA_IF)
 station.active(True) # Must stay active for ESPNow (therefore it is already activated here).
 
 # Initialization of datastream visualization via ESPNow
-ledViz.initialize()
+# ledViz.initialize()
 
 mqtt.initClient(subscription_cb)
 
