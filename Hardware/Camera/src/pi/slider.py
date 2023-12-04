@@ -41,6 +41,7 @@ class Slider:
                 continue
 
             print("pins changed! prev: " + str(prev) + " curr: " + str(curr))
+            self.queue.queue.clear()
             self.queue.put({
                 "state": curr,
                 "is_local_change": True

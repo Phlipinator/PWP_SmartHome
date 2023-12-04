@@ -109,7 +109,7 @@ class VideoStream:
         print("STARTING NGROK", flush=True)
         try:
             # Start ngrok in the background
-            ngrok_cmd = f"/snap/bin/ngrok config add-authtoken 2Xr3WnFEufQkOd2URnsdmZtdoRL_nEn3Gkma5FwzdL1T8kQT ; /snap/bin/ngrok http {local_port} --log=stdout"
+            ngrok_cmd = f"/snap/bin/ngrok config add-authtoken 2Xr3WnFEufQkOd2URnsdmZtdoRL_nEn3Gkma5FwzdL1T8kQT ; /snap/bin/ngrok http {local_port} --request-header-add 'ngrok-skip-browser-warning: 1' --log=stdout"
             self.ngrok_process = subprocess.Popen(ngrok_cmd, shell=True, stdout=subprocess.PIPE)
 
             # Wait for ngrok to start
