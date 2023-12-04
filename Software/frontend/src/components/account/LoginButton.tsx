@@ -7,6 +7,7 @@ const LoginButton = (): ReactElement => {
 
   return (
     <Button
+      className='Default-Button'
       colorScheme='telegram'
       border='none'
       w='100%'

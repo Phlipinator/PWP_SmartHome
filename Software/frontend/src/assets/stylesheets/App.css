@@ -38,6 +38,10 @@
   }
 }
 
+.Default-Button {
+  max-width: 212px;
+}
+
 .selected-item {
   text-align: center;
 }
